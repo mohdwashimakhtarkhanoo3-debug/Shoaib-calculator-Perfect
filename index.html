@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Shoaib Calculate Perfect</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background:#0f172a;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.app{
+    background:#020617;
+    padding:20px;
+    border-radius:16px;
+    width:330px;
+    box-shadow:0 0 20px #38bdf8;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:10px;
+    color:#38bdf8;
+}
+
+.display{
+    width:100%;
+    height:50px;
+    background:black;
+    color:#22c55e;
+    font-size:22px;
+    text-align:right;
+    padding:10px;
+    box-sizing:border-box;
+    border-radius:8px;
+    margin-bottom:10px;
+}
+
+.buttons{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+button{
+    padding:15px;
+    font-size:18px;
+    border:none;
+    border-radius:10px;
+    background:#1e293b;
+    color:white;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#38bdf8;
+    color:black;
+}
+
+.quest-btn{
+    margin-top:12px;
+    width:100%;
+    background:#22c55e;
+    color:black;
+    font-weight:bold;
+}
+
+.popup{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.7);
+    display:none;
+    justify-content:center;
+    align-items:center;
+}
+
+.popup-box{
+    background:#020617;
+    padding:20px;
+    border-radius:14px;
+    width:300px;
+    text-align:center;
+    box-shadow:0 0 15px #22c55e;
+}
+
+.popup input{
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+    font-size:18px;
+    border-radius:8px;
+    border:none;
+    text-align:center;
+}
+
+.close{
+    margin-top:10px;
+    background:red;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+    <h1>Shoaib Calculate</h1>
+
+    <div class="display" id="display">0</div>
+
+    <div class="buttons">
+        <button onclick="add('7')">7</button>
+        <button onclick="add('8')">8</button>
+        <button onclick="add('9')">9</button>
+        <button onclick="add('/')">÷</button>
+
+        <button onclick="add('4')">4</button>
+        <button onclick="add('5')">5</button>
+        <button onclick="add('6')">6</button>
+        <button onclick="add('*')">×</button>
+
+        <button onclick="add('1')">1</button>
+        <button onclick="add('2')">2</button>
+        <button onclick="add('3')">3</button>
+        <button onclick="add('-')">−</button>
+
+        <button onclick="clearAll()">C</button>
+        <button onclick="add('0')">0</button>
+        <button onclick="calculate()">=</button>
+        <button onclick="add('+')">+</button>
+    </div>
+
+    <button class="quest-btn" onclick="openQuest()">🧠 Math Quest</button>
+</div>
+
+<!-- POPUP -->
+<div class="popup" id="popup">
+    <div class="popup-box">
+        <h3 id="question">Question</h3>
+        <input id="answer" placeholder="Your Answer">
+        <button onclick="checkAnswer()">Submit</button>
+        <button class="close" onclick="closeQuest()">Close</button>
+    </div>
+</div>
+
+<script>
+let display = document.getElementById("display");
+let popup = document.getElementById("popup");
+let questionEl = document.getElementById("question");
+let answerEl = document.getElementById("answer");
+let correctAnswer = 0;
+
+function add(value){
+    if(display.innerText === "0") display.innerText = value;
+    else display.innerText += value;
+}
+
+function clearAll(){
+    display.innerText = "0";
+}
+
+function calculate(){
+    try{
+        display.innerText = eval(display.innerText);
+    }catch{
+        display.innerText = "Error";
+    }
+}
+
+function openQuest(){
+    popup.style.display = "flex";
+    generateQuestion();
+}
+
+function closeQuest(){
+    popup.style.display = "none";
+}
+
+function generateQuestion(){
+    let a = Math.floor(Math.random()*20);
+    let b = Math.floor(Math.random()*20);
+    let ops = ["+","-","*"];
+    let op = ops[Math.floor(Math.random()*ops.length)];
+
+    questionEl.innerText = `What is ${a} ${op} ${b} ?`;
+    correctAnswer = eval(a + op + b);
+    answerEl.value = "";
+}
+
+function checkAnswer(){
+    if(answerEl.value == correctAnswer){
+        alert("✅ Correct!");
+    }else{
+        alert("❌ Wrong! Correct answer is " + correctAnswer);
+    }
+    generateQuestion();
+}
+</script>
+
+</body>
+</html>
