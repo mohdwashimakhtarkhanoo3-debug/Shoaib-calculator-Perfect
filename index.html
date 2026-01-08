@@ -6,42 +6,50 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+*{box-sizing:border-box}
+
 body{
     margin:0;
-    font-family: Arial, sans-serif;
-    background:#0f172a;
-    color:white;
+    height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
-    height:100vh;
+    background:radial-gradient(circle at top,#0f172a,#020617);
+    font-family:Segoe UI, sans-serif;
+    color:white;
 }
 
 .app{
-    background:#020617;
-    padding:20px;
-    border-radius:16px;
     width:330px;
-    box-shadow:0 0 20px #38bdf8;
+    padding:20px;
+    border-radius:20px;
+    background:rgba(15,23,42,0.75);
+    backdrop-filter:blur(12px);
+    box-shadow:0 0 30px #38bdf8;
+    animation:float 4s ease-in-out infinite;
 }
 
-h1{
+@keyframes float{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-6px)}
+}
+
+h2{
     text-align:center;
-    margin-bottom:10px;
     color:#38bdf8;
+    margin-bottom:12px;
+    letter-spacing:1px;
 }
 
 .display{
-    width:100%;
-    height:50px;
     background:black;
     color:#22c55e;
-    font-size:22px;
+    font-size:24px;
+    padding:12px;
+    border-radius:10px;
     text-align:right;
-    padding:10px;
-    box-sizing:border-box;
-    border-radius:8px;
-    margin-bottom:10px;
+    margin-bottom:14px;
+    box-shadow:inset 0 0 10px #22c55e;
 }
 
 .buttons{
@@ -51,62 +59,70 @@ h1{
 }
 
 button{
-    padding:15px;
+    padding:16px;
     font-size:18px;
     border:none;
-    border-radius:10px;
+    border-radius:14px;
     background:#1e293b;
     color:white;
-    cursor:pointer;
+    transition:0.15s;
 }
 
-button:hover{
+button:active{
+    transform:scale(0.9);
     background:#38bdf8;
     color:black;
+    box-shadow:0 0 12px #38bdf8;
 }
 
-.quest-btn{
-    margin-top:12px;
+.quest{
+    margin-top:14px;
     width:100%;
     background:#22c55e;
     color:black;
     font-weight:bold;
+    font-size:18px;
+    box-shadow:0 0 15px #22c55e;
 }
 
+/* Popup */
 .popup{
     position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
+    inset:0;
     background:rgba(0,0,0,0.7);
     display:none;
     justify-content:center;
     align-items:center;
 }
 
-.popup-box{
-    background:#020617;
+.box{
+    width:280px;
     padding:20px;
-    border-radius:14px;
-    width:300px;
+    border-radius:18px;
+    background:#020617;
     text-align:center;
-    box-shadow:0 0 15px #22c55e;
+    box-shadow:0 0 20px #22c55e;
+    animation:pop 0.3s ease;
 }
 
-.popup input{
+@keyframes pop{
+    from{transform:scale(0.6);opacity:0}
+    to{transform:scale(1);opacity:1}
+}
+
+input{
     width:100%;
-    padding:10px;
-    margin-top:10px;
+    padding:12px;
+    margin-top:12px;
     font-size:18px;
-    border-radius:8px;
     border:none;
+    border-radius:10px;
     text-align:center;
 }
 
 .close{
-    margin-top:10px;
     background:red;
+    margin-top:10px;
 }
 </style>
 </head>
@@ -114,8 +130,7 @@ button:hover{
 <body>
 
 <div class="app">
-    <h1>Shoaib Calculate</h1>
-
+    <h2>Shoaib Calculate</h2>
     <div class="display" id="display">0</div>
 
     <div class="buttons">
@@ -136,74 +151,63 @@ button:hover{
 
         <button onclick="clearAll()">C</button>
         <button onclick="add('0')">0</button>
-        <button onclick="calculate()">=</button>
+        <button onclick="calc()">=</button>
         <button onclick="add('+')">+</button>
     </div>
 
-    <button class="quest-btn" onclick="openQuest()">🧠 Math Quest</button>
+    <button class="quest" onclick="openQuest()">🧠 Math Quest</button>
 </div>
 
-<!-- POPUP -->
 <div class="popup" id="popup">
-    <div class="popup-box">
-        <h3 id="question">Question</h3>
-        <input id="answer" placeholder="Your Answer">
-        <button onclick="checkAnswer()">Submit</button>
+    <div class="box">
+        <h3 id="q">Question</h3>
+        <input id="ans" placeholder="Answer">
+        <button onclick="check()">Submit</button>
         <button class="close" onclick="closeQuest()">Close</button>
     </div>
 </div>
 
 <script>
-let display = document.getElementById("display");
-let popup = document.getElementById("popup");
-let questionEl = document.getElementById("question");
-let answerEl = document.getElementById("answer");
-let correctAnswer = 0;
+let display=document.getElementById("display");
+let popup=document.getElementById("popup");
+let q=document.getElementById("q");
+let ans=document.getElementById("ans");
+let correct=0;
 
-function add(value){
-    if(display.innerText === "0") display.innerText = value;
-    else display.innerText += value;
+function add(v){
+    if(display.innerText=="0") display.innerText=v;
+    else display.innerText+=v;
 }
 
-function clearAll(){
-    display.innerText = "0";
-}
+function clearAll(){display.innerText="0"}
 
-function calculate(){
-    try{
-        display.innerText = eval(display.innerText);
-    }catch{
-        display.innerText = "Error";
-    }
+function calc(){
+    try{display.innerText=eval(display.innerText)}
+    catch{display.innerText="Error"}
 }
 
 function openQuest(){
-    popup.style.display = "flex";
-    generateQuestion();
+    popup.style.display="flex";
+    newQ();
 }
 
 function closeQuest(){
-    popup.style.display = "none";
+    popup.style.display="none";
 }
 
-function generateQuestion(){
-    let a = Math.floor(Math.random()*20);
-    let b = Math.floor(Math.random()*20);
-    let ops = ["+","-","*"];
-    let op = ops[Math.floor(Math.random()*ops.length)];
-
-    questionEl.innerText = `What is ${a} ${op} ${b} ?`;
-    correctAnswer = eval(a + op + b);
-    answerEl.value = "";
+function newQ(){
+    let a=Math.floor(Math.random()*20);
+    let b=Math.floor(Math.random()*20);
+    let ops=["+","-","*"];
+    let op=ops[Math.floor(Math.random()*3)];
+    q.innerText=`What is ${a} ${op} ${b}?`;
+    correct=eval(a+op+b);
+    ans.value="";
 }
 
-function checkAnswer(){
-    if(answerEl.value == correctAnswer){
-        alert("✅ Correct!");
-    }else{
-        alert("❌ Wrong! Correct answer is " + correctAnswer);
-    }
-    generateQuestion();
+function check(){
+    alert(ans.value==correct?"✅ Correct!":"❌ Wrong! Answer: "+correct);
+    newQ();
 }
 </script>
 
